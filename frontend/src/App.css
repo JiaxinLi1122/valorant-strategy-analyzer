@@ -150,6 +150,15 @@ select {
     padding-left: 20px;
 }
 
+.validation-box {
+    margin-top: 18px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(255, 70, 85, 0.12);
+    border: 1px solid rgba(255, 70, 85, 0.5);
+    color: #ffd6da;
+}
+
 .analyze-button {
     margin-top: 24px;
     width: 100%;
@@ -168,7 +177,8 @@ select {
     opacity: 0.92;
 }
 
-.placeholder-card {
+.placeholder-card,
+.result-card {
     padding: 20px;
     border-radius: 12px;
     background: #0f1923;
@@ -176,7 +186,9 @@ select {
     min-height: 260px;
 }
 
-.role-summary {
+.role-summary,
+.result-section,
+.score-box {
     margin-top: 20px;
     padding: 14px;
     border-radius: 10px;
@@ -184,14 +196,24 @@ select {
     border: 1px solid #31404f;
 }
 
-.role-summary h3 {
+.role-summary h3,
+.result-section h3,
+.score-box h3 {
     margin-top: 0;
     margin-bottom: 10px;
 }
 
-.role-summary ul {
+.role-summary ul,
+.result-section ul {
     margin: 0;
     padding-left: 20px;
+}
+
+.big-score {
+    margin: 0;
+    font-size: 36px;
+    font-weight: bold;
+    color: #ff4655;
 }
 
 .placeholder-text {

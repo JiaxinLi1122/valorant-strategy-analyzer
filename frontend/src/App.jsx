@@ -17,6 +17,8 @@ function App() {
 
     const [selectedMap, setSelectedMap] = useState("Ascent");
     const [selectedAgents, setSelectedAgents] = useState([]);
+    const [analysisResult, setAnalysisResult] = useState(null);
+    const [validationMessage, setValidationMessage] = useState("");
 
     function toggleAgent(agentName) {
         if (selectedAgents.includes(agentName)) {
@@ -49,6 +51,161 @@ function App() {
     }, [selectedAgentObjects]);
 
     const remainingSlots = 5 - selectedAgents.length;
+
+    function analyzeComposition() {
+        if (selectedAgents.length !== 5) {
+            setValidationMessage("Please select exactly 5 agents before analysis.");
+            setAnalysisResult(null);
+            return;
+        }
+
+        setValidationMessage("");
+
+        let score = 50;
+        const strengths = [];
+        const weaknesses = [];
+
+        const duelistCount = roleSummary.Duelist;
+        const controllerCount = roleSummary.Controller;
+        const initiatorCount = roleSummary.Initiator;
+        const sentinelCount = roleSummary.Sentinel;
+
+        if (controllerCount >= 1) {
+            score += 10;
+            strengths.push("Has controller utility for site takes and map control.");
+        } else {
+            score -= 20;
+            weaknesses.push("No controller selected, so smoke coverage is missing.");
+        }
+
+        if (initiatorCount >= 1) {
+            score += 10;
+            strengths.push("Has initiator utility for information and team support.");
+        } else {
+            score -= 15;
+            weaknesses.push("No initiator selected, so information gathering is limited.");
+        }
+
+        if (sentinelCount >= 1) {
+            score += 10;
+            strengths.push("Has sentinel presence for anchoring and defensive stability.");
+        } else {
+            score -= 15;
+            weaknesses.push("No sentinel selected, so defensive setups may be weak.");
+        }
+
+        if (duelistCount >= 1) {
+            score += 10;
+            strengths.push("Has duelist entry potential for taking space.");
+        } else {
+            score -= 15;
+            weaknesses.push("No duelist selected, so entry pressure may be low.");
+        }
+
+        if (
+            duelistCount === 1 &&
+            controllerCount === 1 &&
+            initiatorCount >= 1 &&
+            sentinelCount === 1
+        ) {
+            score += 10;
+            strengths.push("The composition has strong overall role balance.");
+        }
+
+        if (duelistCount >= 2) {
+            score += 5;
+            strengths.push("Double duelist can create aggressive entry pressure.");
+            weaknesses.push("Heavy duelist focus may reduce utility depth.");
+        }
+
+        if (controllerCount >= 2) {
+            score += 5;
+            strengths.push("Double controller can improve map control and executes.");
+        }
+
+        if (initiatorCount >= 2) {
+            score += 5;
+            strengths.push("Double initiator provides strong scouting and support utility.");
+        }
+
+        if (sentinelCount >= 2) {
+            score += 3;
+            strengths.push("Extra sentinel utility can strengthen site holds.");
+            weaknesses.push("Too much defensive utility may reduce attack flexibility.");
+        }
+
+        if (selectedMap === "Ascent") {
+            if (controllerCount >= 1 && initiatorCount >= 1 && sentinelCount >= 1) {
+                score += 8;
+                strengths.push("This composition fits Ascent well with balanced control and info.");
+            } else {
+                weaknesses.push("Ascent usually benefits from balanced control, info, and anchoring.");
+            }
+        }
+
+        if (selectedMap === "Bind") {
+            if (controllerCount >= 1 && initiatorCount >= 1) {
+                score += 8;
+                strengths.push("This composition can support Bind executes and fast site pressure.");
+            } else {
+                weaknesses.push("Bind often needs strong execute utility and coordinated support.");
+            }
+        }
+
+        if (selectedMap === "Split") {
+            if (sentinelCount >= 1 && controllerCount >= 1) {
+                score += 8;
+                strengths.push("This composition fits Split with good choke control and defense.");
+            } else {
+                weaknesses.push("Split often rewards strong stall and smoke control.");
+            }
+        }
+
+        if (selectedMap === "Haven") {
+            if (initiatorCount >= 1 && sentinelCount >= 1) {
+                score += 8;
+                strengths.push("This composition fits Haven with info gathering and flexible defense.");
+            } else {
+                weaknesses.push("Haven often benefits from strong information and site coverage.");
+            }
+        }
+
+        if (score > 100) score = 100;
+        if (score < 0) score = 0;
+
+        let roleBalance = "Average";
+        if (
+            duelistCount >= 1 &&
+            controllerCount >= 1 &&
+            initiatorCount >= 1 &&
+            sentinelCount >= 1
+        ) {
+            roleBalance = "Good";
+        }
+        if (
+            duelistCount === 1 &&
+            controllerCount === 1 &&
+            initiatorCount >= 1 &&
+            sentinelCount === 1
+        ) {
+            roleBalance = "Excellent";
+        }
+        if (
+            controllerCount === 0 ||
+            initiatorCount === 0 ||
+            sentinelCount === 0 ||
+            duelistCount === 0
+        ) {
+            roleBalance = "Weak";
+        }
+
+        setAnalysisResult({
+            score,
+            roleBalance,
+            strengths,
+            weaknesses,
+        });
+    }
 
     return (
         <div className="app">
@@ -123,35 +280,73 @@ function App() {
                         )}
                     </div>
 
-                    <button className="analyze-button">Analyze Strategy</button>
+                    {validationMessage && (
+                        <div className="validation-box">{validationMessage}</div>
+                    )}
+
+                    <button className="analyze-button" onClick={analyzeComposition}>
+                        Analyze Strategy
+                    </button>
                 </section>
 
                 <section className="panel right-panel">
-                    <h2>Analysis Preview</h2>
+                    <h2>Analysis Result</h2>
 
-                    <div className="placeholder-card">
-                        <p>
-                            <strong>Selected Map:</strong> {selectedMap}
-                        </p>
+                    {!analysisResult ? (
+                        <div className="placeholder-card">
+                            <p>
+                                <strong>Selected Map:</strong> {selectedMap}
+                            </p>
 
-                        <p>
-                            <strong>Team Size:</strong> {selectedAgents.length}/5
-                        </p>
+                            <p>
+                                <strong>Team Size:</strong> {selectedAgents.length}/5
+                            </p>
 
-                        <div className="role-summary">
-                            <h3>Role Summary</h3>
-                            <ul>
-                                <li>Duelist: {roleSummary.Duelist}</li>
-                                <li>Controller: {roleSummary.Controller}</li>
-                                <li>Initiator: {roleSummary.Initiator}</li>
-                                <li>Sentinel: {roleSummary.Sentinel}</li>
-                            </ul>
+                            <div className="role-summary">
+                                <h3>Role Summary</h3>
+                                <ul>
+                                    <li>Duelist: {roleSummary.Duelist}</li>
+                                    <li>Controller: {roleSummary.Controller}</li>
+                                    <li>Initiator: {roleSummary.Initiator}</li>
+                                    <li>Sentinel: {roleSummary.Sentinel}</li>
+                                </ul>
+                            </div>
+
+                            <p className="placeholder-text">
+                                Select 5 agents and click Analyze Strategy to generate a result.
+                            </p>
                         </div>
+                    ) : (
+                        <div className="result-card">
+                            <div className="score-box">
+                                <h3>Overall Score</h3>
+                                <p className="big-score">{analysisResult.score}/100</p>
+                            </div>
 
-                        <p className="placeholder-text">
-                            Strategy results will appear here after analysis is implemented.
-                        </p>
-                    </div>
+                            <div className="result-section">
+                                <h3>Role Balance</h3>
+                                <p>{analysisResult.roleBalance}</p>
+                            </div>
+
+                            <div className="result-section">
+                                <h3>Strengths</h3>
+                                <ul>
+                                    {analysisResult.strengths.map((item, index) => (
+                                        <li key={index}>{item}</li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            <div className="result-section">
+                                <h3>Weaknesses</h3>
+                                <ul>
+                                    {analysisResult.weaknesses.map((item, index) => (
+                                        <li key={index}>{item}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    )}
                 </section>
             </main>
         </div>
