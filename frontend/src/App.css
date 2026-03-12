@@ -67,6 +67,18 @@ body {
     font-weight: bold;
 }
 
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.slot-counter {
+    font-size: 14px;
+    color: #c7d0d9;
+}
+
 select {
     width: 100%;
     padding: 12px;
@@ -78,19 +90,23 @@ select {
 }
 
 .agent-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
 }
 
 .agent-button {
-    padding: 10px 14px;
+    padding: 14px;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     background: #243341;
     color: white;
     cursor: pointer;
     transition: 0.2s ease;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .agent-button:hover {
@@ -100,6 +116,21 @@ select {
 .agent-button.selected {
     background: #ff4655;
     color: white;
+}
+
+.agent-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.agent-name {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.agent-role {
+    font-size: 13px;
+    color: #d9e1e8;
 }
 
 .selected-box {
@@ -142,7 +173,25 @@ select {
     border-radius: 12px;
     background: #0f1923;
     border: 1px solid #31404f;
-    min-height: 220px;
+    min-height: 260px;
+}
+
+.role-summary {
+    margin-top: 20px;
+    padding: 14px;
+    border-radius: 10px;
+    background: #18232e;
+    border: 1px solid #31404f;
+}
+
+.role-summary h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.role-summary ul {
+    margin: 0;
+    padding-left: 20px;
 }
 
 .placeholder-text {
@@ -153,6 +202,10 @@ select {
 
 @media (max-width: 900px) {
     .main-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .agent-grid {
         grid-template-columns: 1fr;
     }
 }

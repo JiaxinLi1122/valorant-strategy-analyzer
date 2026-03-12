@@ -1,32 +1,54 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import "./App.css";
 
 function App() {
     const maps = ["Ascent", "Bind", "Split", "Haven"];
 
-    const agents = [
-        "Jett",
-        "Raze",
-        "Omen",
-        "Brimstone",
-        "Sova",
-        "Skye",
-        "Killjoy",
-        "Cypher",
+    const agentData = [
+        { name: "Jett", role: "Duelist" },
+        { name: "Raze", role: "Duelist" },
+        { name: "Omen", role: "Controller" },
+        { name: "Brimstone", role: "Controller" },
+        { name: "Sova", role: "Initiator" },
+        { name: "Skye", role: "Initiator" },
+        { name: "Killjoy", role: "Sentinel" },
+        { name: "Cypher", role: "Sentinel" },
     ];
 
     const [selectedMap, setSelectedMap] = useState("Ascent");
     const [selectedAgents, setSelectedAgents] = useState([]);
 
-    function toggleAgent(agent) {
-        if (selectedAgents.includes(agent)) {
-            setSelectedAgents(selectedAgents.filter((a) => a !== agent));
-        } else {
-            if (selectedAgents.length < 5) {
-                setSelectedAgents([...selectedAgents, agent]);
-            }
+    function toggleAgent(agentName) {
+        if (selectedAgents.includes(agentName)) {
+            setSelectedAgents(selectedAgents.filter((agent) => agent !== agentName));
+            return;
+        }
+
+        if (selectedAgents.length < 5) {
+            setSelectedAgents([...selectedAgents, agentName]);
         }
     }
+
+    const selectedAgentObjects = agentData.filter((agent) =>
+        selectedAgents.includes(agent.name)
+    );
+
+    const roleSummary = useMemo(() => {
+        const summary = {
+            Duelist: 0,
+            Controller: 0,
+            Initiator: 0,
+            Sentinel: 0,
+        };
+
+        selectedAgentObjects.forEach((agent) => {
+            summary[agent.role] += 1;
+        });
+
+        return summary;
+    }, [selectedAgentObjects]);
+
+    const remainingSlots = 5 - selectedAgents.length;
 
     return (
         <div className="app">
@@ -57,19 +79,32 @@ function App() {
                     </div>
 
                     <div className="form-group">
-                        <label>Select Agents (max 5)</label>
+                        <div className="section-header">
+                            <label>Select Agents</label>
+                            <span className="slot-counter">
+                {remainingSlots === 0
+                    ? "Team full"
+                    : `${remainingSlots} slot${remainingSlots > 1 ? "s" : ""} left`}
+              </span>
+                        </div>
+
                         <div className="agent-grid">
-                            {agents.map((agent) => (
-                                <button
-                                    key={agent}
-                                    className={`agent-button ${
-                                        selectedAgents.includes(agent) ? "selected" : ""
-                                    }`}
-                                    onClick={() => toggleAgent(agent)}
-                                >
-                                    {agent}
-                                </button>
-                            ))}
+                            {agentData.map((agent) => {
+                                const isSelected = selectedAgents.includes(agent.name);
+                                const isDisabled = !isSelected && selectedAgents.length >= 5;
+
+                                return (
+                                    <button
+                                        key={agent.name}
+                                        className={`agent-button ${isSelected ? "selected" : ""}`}
+                                        onClick={() => toggleAgent(agent.name)}
+                                        disabled={isDisabled}
+                                    >
+                                        <span className="agent-name">{agent.name}</span>
+                                        <span className="agent-role">{agent.role}</span>
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
 
@@ -79,8 +114,10 @@ function App() {
                             <p>No agents selected yet.</p>
                         ) : (
                             <ul>
-                                {selectedAgents.map((agent) => (
-                                    <li key={agent}>{agent}</li>
+                                {selectedAgentObjects.map((agent) => (
+                                    <li key={agent.name}>
+                                        {agent.name} — {agent.role}
+                                    </li>
                                 ))}
                             </ul>
                         )}
@@ -90,13 +127,27 @@ function App() {
                 </section>
 
                 <section className="panel right-panel">
-                    <h2>Analysis Result</h2>
+                    <h2>Analysis Preview</h2>
+
                     <div className="placeholder-card">
-                        <p>Map: {selectedMap}</p>
                         <p>
-                            Selected team:{" "}
-                            {selectedAgents.length > 0 ? selectedAgents.join(", ") : "None yet"}
+                            <strong>Selected Map:</strong> {selectedMap}
                         </p>
+
+                        <p>
+                            <strong>Team Size:</strong> {selectedAgents.length}/5
+                        </p>
+
+                        <div className="role-summary">
+                            <h3>Role Summary</h3>
+                            <ul>
+                                <li>Duelist: {roleSummary.Duelist}</li>
+                                <li>Controller: {roleSummary.Controller}</li>
+                                <li>Initiator: {roleSummary.Initiator}</li>
+                                <li>Sentinel: {roleSummary.Sentinel}</li>
+                            </ul>
+                        </div>
+
                         <p className="placeholder-text">
                             Strategy results will appear here after analysis is implemented.
                         </p>
