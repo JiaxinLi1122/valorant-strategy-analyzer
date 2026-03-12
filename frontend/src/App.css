@@ -184,12 +184,14 @@ select {
     background: #0f1923;
     border: 1px solid #31404f;
     min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .role-summary,
 .result-section,
 .score-box {
-    margin-top: 20px;
     padding: 14px;
     border-radius: 10px;
     background: #18232e;
