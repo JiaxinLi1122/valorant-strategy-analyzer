@@ -197,24 +197,24 @@ select:focus {
 }
 
 .analyze-button {
-    margin-top: 24px;
-    width: 100%;
-    padding: 15px;
+    margin-top: 0;
+    padding: 18px;
     border: none;
-    border-radius: 14px;
-    background: linear-gradient(180deg, #ff5d6a 0%, #ff4655 100%);
+    border-radius: 16px;
+    background: linear-gradient(180deg, #ff6a75 0%, #ff4655 100%);
     color: white;
-    font-size: 16px;
-    font-weight: bold;
-    letter-spacing: 0.3px;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
     cursor: pointer;
     transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
-    box-shadow: 0 10px 24px rgba(255, 70, 85, 0.22);
+    box-shadow: 0 12px 28px rgba(255, 70, 85, 0.3);
 }
 
 .analyze-button:hover {
-    transform: translateY(-1px);
-    opacity: 0.96;
+    transform: translateY(-2px);
+    opacity: 0.98;
+    box-shadow: 0 16px 34px rgba(255, 70, 85, 0.38);
 }
 
 .placeholder-card,
@@ -361,5 +361,42 @@ select:focus {
 
     .role-group-title {
         font-size: 20px;
+    }
+}
+
+.action-buttons {
+    display: flex;
+    gap: 14px;
+    margin-top: 28px;
+}
+
+.action-buttons button {
+    flex: 1;
+}
+
+.reset-button {
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    background: linear-gradient(180deg, #1c2a36 0%, #16212b 100%);
+    color: white;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+}
+
+.reset-button:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(180deg, #223240 0%, #1a2732 100%);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.24);
+}
+
+@media (max-width: 700px) {
+    .action-buttons {
+        flex-direction: column;
     }
 }

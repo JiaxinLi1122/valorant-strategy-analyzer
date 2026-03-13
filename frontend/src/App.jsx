@@ -68,6 +68,12 @@ function App() {
         setAnalysisResult(result);
     }
 
+    function resetTeam() {
+        setSelectedAgents([]);
+        setAnalysisResult(null);
+        setValidationMessage("");
+    }
+
     return (
         <div className="app">
             <header className="topbar">
@@ -162,9 +168,15 @@ function App() {
                         <div className="validation-box">{validationMessage}</div>
                     )}
 
-                    <button className="analyze-button" onClick={runAnalysis}>
-                        Analyze Strategy
-                    </button>
+                    <div className="action-buttons">
+                        <button className="analyze-button" onClick={runAnalysis}>
+                            Analyze Strategy
+                        </button>
+
+                        <button className="reset-button" onClick={resetTeam}>
+                            Reset Team
+                        </button>
+                    </div>
                 </section>
 
                 <section className="panel right-panel">
