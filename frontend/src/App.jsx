@@ -11,12 +11,12 @@ function App() {
 
     function toggleAgent(agentName) {
         if (selectedAgents.includes(agentName)) {
-            setSelectedAgents(selectedAgents.filter((agent) => agent !== agentName));
+            setSelectedAgents((prev) => prev.filter((agent) => agent !== agentName));
             return;
         }
 
         if (selectedAgents.length < 5) {
-            setSelectedAgents([...selectedAgents, agentName]);
+            setSelectedAgents((prev) => [...prev, agentName]);
         }
     }
 
@@ -39,10 +39,18 @@ function App() {
         return summary;
     }, [selectedAgentObjects]);
 
+    const groupedAgents = useMemo(() => {
+        return {
+            Duelist: agentData.filter((agent) => agent.role === "Duelist"),
+            Controller: agentData.filter((agent) => agent.role === "Controller"),
+            Initiator: agentData.filter((agent) => agent.role === "Initiator"),
+            Sentinel: agentData.filter((agent) => agent.role === "Sentinel"),
+        };
+    }, []);
+
     const remainingSlots = 5 - selectedAgents.length;
 
     function runAnalysis() {
-
         if (selectedAgents.length !== 5) {
             setValidationMessage("Please select exactly 5 agents before analysis.");
             setAnalysisResult(null);
@@ -65,7 +73,10 @@ function App() {
             <header className="topbar">
                 <div>
                     <h1>Valorant Strategy Analyzer</h1>
-                    <p>Build a team composition and review its strengths and weaknesses</p>
+                    <p>
+                        Analyze team compositions, review role balance, and generate
+                        map-based strategy suggestions.
+                    </p>
                 </div>
             </header>
 
@@ -98,24 +109,38 @@ function App() {
               </span>
                         </div>
 
-                        <div className="agent-grid">
-                            {agentData.map((agent) => {
-                                const isSelected = selectedAgents.includes(agent.name);
-                                const isDisabled = !isSelected && selectedAgents.length >= 5;
+                        {Object.entries(groupedAgents).map(([role, agents]) => (
+                            <div key={role} className="role-group">
+                                <h3 className="role-group-title">{role}</h3>
 
-                                return (
-                                    <button
-                                        key={agent.name}
-                                        className={`agent-button ${isSelected ? "selected" : ""}`}
-                                        onClick={() => toggleAgent(agent.name)}
-                                        disabled={isDisabled}
-                                    >
-                                        <span className="agent-name">{agent.name}</span>
-                                        <span className="agent-role">{agent.role}</span>
-                                    </button>
-                                );
-                            })}
-                        </div>
+                                <div className="agent-grid">
+                                    {agents.map((agent) => {
+                                        const isSelected = selectedAgents.includes(agent.name);
+                                        const isDisabled =
+                                            !isSelected && selectedAgents.length >= 5;
+
+                                        return (
+                                            <button
+                                                key={agent.name}
+                                                className={`agent-button ${isSelected ? "selected" : ""}`}
+                                                onClick={() => toggleAgent(agent.name)}
+                                                disabled={isDisabled}
+                                            >
+                                                <img
+                                                    src={agent.image}
+                                                    alt={agent.name}
+                                                    className="agent-portrait"
+                                                />
+                                                <div className="agent-text">
+                                                    <span className="agent-name">{agent.name}</span>
+                                                    <span className="agent-role">{agent.role}</span>
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        ))}
                     </div>
 
                     <div className="selected-box">

@@ -302,3 +302,64 @@ select:focus {
         grid-template-columns: 1fr;
     }
 }
+
+.role-group {
+    margin-bottom: 28px;
+}
+
+.role-group-title {
+    margin: 0 0 14px;
+    font-size: 22px;
+    color: #ff4655;
+}
+
+.agent-button {
+    align-items: center;
+    flex-direction: row;
+    gap: 14px;
+    min-height: 110px;
+}
+
+.agent-portrait {
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.agent-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.agent-name {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.agent-role {
+    font-size: 15px;
+    color: #d9e1e8;
+}
+
+.agent-button.selected .agent-role {
+    color: #fff0f2;
+}
+
+@media (max-width: 700px) {
+    .agent-button {
+        min-height: 96px;
+    }
+
+    .agent-portrait {
+        width: 56px;
+        height: 56px;
+    }
+
+    .role-group-title {
+        font-size: 20px;
+    }
+}
