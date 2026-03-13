@@ -75,7 +75,8 @@ function Builder() {
     }
 
     return (
-        <main className="main-layout">
+        <main className="builder-shell">
+            <div className="main-layout">
             <section className="panel left-panel">
                 <h2>Team Builder</h2>
 
@@ -253,6 +254,7 @@ function Builder() {
                     </div>
                 )}
             </section>
+            </div>
         </main>
     );
 }
